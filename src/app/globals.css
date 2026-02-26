@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* iPhoneで“PCサイトっぽい”表示になる時の保険 */
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, "Noto Sans JP", "Apple Color Emoji", "Segoe UI Emoji";
+  font-size: 16px;
+  line-height: 1.5;
+}
+
+/* ブラウザデフォルトの巨大見出しを抑制 */
+h1 { font-size: 24px; margin: 0 0 12px; }
+h2 { font-size: 18px; margin: 0 0 8px; }
+p  { margin: 0 0 12px; }
