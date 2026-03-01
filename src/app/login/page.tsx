@@ -75,19 +75,24 @@ export default function LoginPage() {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
-        {showEmailError && (
-          <p style={{ color: '#b91c1c', fontSize: 13, marginBottom: 10 }}>
-            *メールアドレスを入力してください
-          </p>
-        )}
+        <div style={{ minHeight: 18, marginBottom: 10 }}>
+          {showEmailError && (
+            <p style={{ color: '#b91c1c', fontSize: 13, margin: 0 }}>
+              *メールアドレスを入力してください
+            </p>
+          )}
+        </div>
         <button
+          type="button"
           onClick={handleLogin}
           disabled={!canSubmit}
-          className={
-            `text-white h-14 rounded-xl text-base font-medium w-full ` +
-            (canSubmit ? 'bg-blue-500' : 'bg-gray-300')
-          }
-          style={{ cursor: canSubmit ? 'pointer' : 'not-allowed' }}
+          className="h-14 rounded-xl text-base font-medium w-full"
+          style={{
+            backgroundColor: canSubmit ? '#3b82f6' : '#d1d5db',
+            color: '#ffffff',
+            cursor: canSubmit ? 'pointer' : 'not-allowed',
+            border: 'none'
+          }}
         >
           {loading ? 'Sending...' : 'Send Login Link'}
         </button>
