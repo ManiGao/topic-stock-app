@@ -1,18 +1,38 @@
 'use client'
 
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { supabase } from '../../lib/supabase'
 
 export default function LoginPage() {
   const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(false)
 
+  const normalizedEmail = useMemo(() => email.trim(), [email])
+
+  // 全角（例：＠、．、スペース等）や全角混在をざっくり弾く
+  const hasFullWidth = useMemo(() => /[\uFF01-\uFF60\uFFE0-\uFFE6\u3000]/.test(normalizedEmail), [normalizedEmail])
+
+  // 最低限のメール形式チェック（ドメイン必須）
+  const looksLikeEmail = useMemo(() => {
+    if (!normalizedEmail) return false
+    if (hasFullWidth) return false
+    // 例: a@b.c を最低ラインに
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedEmail)
+  }, [normalizedEmail, hasFullWidth])
+
+  const showEmailError = useMemo(() => {
+    if (!normalizedEmail) return false
+    return !looksLikeEmail
+  }, [normalizedEmail, looksLikeEmail])
+
+  const canSubmit = looksLikeEmail && !loading
+
   const handleLogin = async () => {
-    if (!email) return
+    if (!canSubmit) return
     setLoading(true)
 
     const { error } = await supabase.auth.signInWithOtp({
-      email,
+      email: normalizedEmail,
       options: {
         emailRedirectTo: window.location.origin
       }
@@ -46,15 +66,28 @@ export default function LoginPage() {
         <h1 className="text-xl mb-4">Login</h1>
         <input
           type="email"
+          inputMode="email"
+          autoCapitalize="none"
+          autoCorrect="off"
+          spellCheck={false}
           placeholder="your@email.com"
-          className="border p-3 text-[16px] leading-5 w-full mb-4 appearance-none"
+          className="border p-3 text-[16px] leading-5 w-full mb-3 appearance-none"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
         />
+        {showEmailError && (
+          <p style={{ color: '#b91c1c', fontSize: 13, marginBottom: 10 }}>
+            *メールアドレスを入力してください
+          </p>
+        )}
         <button
           onClick={handleLogin}
-          disabled={loading}
-          className="bg-blue-500 text-white h-12 rounded-xl text-base font-medium w-full"
+          disabled={!canSubmit}
+          className={
+            `text-white h-14 rounded-xl text-base font-medium w-full ` +
+            (canSubmit ? 'bg-blue-500' : 'bg-gray-300')
+          }
+          style={{ cursor: canSubmit ? 'pointer' : 'not-allowed' }}
         >
           {loading ? 'Sending...' : 'Send Login Link'}
         </button>
