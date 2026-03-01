@@ -86,8 +86,9 @@ export default function LoginPage() {
           type="button"
           onClick={handleLogin}
           disabled={!canSubmit}
-          className="h-14 rounded-xl text-base font-medium w-full"
+          className="rounded-xl text-base font-medium w-full"
           style={{
+            height: 84,
             backgroundColor: canSubmit ? '#3b82f6' : '#d1d5db',
             color: '#ffffff',
             cursor: canSubmit ? 'pointer' : 'not-allowed',
