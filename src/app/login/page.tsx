@@ -28,19 +28,19 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="p-6 max-w-md mx-auto" >
+    <main className="w-full min-h-screen px-4 py-6 max-w-md mx-auto box-border">
       <h1 className="text-xl mb-4">Login</h1>
       <input
         type="email"
         placeholder="your@email.com"
-        className="border p-2 w-full mb-4"
+        className="border p-3 text-base w-full mb-4"
         value={email}
         onChange={(e) => setEmail(e.target.value)}
       />
       <button
         onClick={handleLogin}
         disabled={loading}
-        className="bg-blue-500 text-white px-4 py-2 w-full"
+        className="bg-blue-500 text-white px-4 py-2 text-base w-full"
       >
         {loading ? 'Sending...' : 'Send Login Link'}
       </button>
