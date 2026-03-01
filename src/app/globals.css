@@ -19,3 +19,14 @@ body {
 h1 { font-size: 24px; margin: 0 0 12px; }
 h2 { font-size: 18px; margin: 0 0 8px; }
 p  { margin: 0 0 12px; }
+
+/* iOS Safariでの 100vw/フォーム要素のはみ出し対策 */
+html, body {
+  width: 100%;
+  overflow-x: hidden;
+}
+
+/* padding/border込みで幅計算（フォームの右はみ出し防止） */
+*, *::before, *::after {
+  box-sizing: border-box;
+}

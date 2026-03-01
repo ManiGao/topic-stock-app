@@ -35,21 +35,30 @@ export default function LoginPage() {
         paddingRight: 'max(16px, env(safe-area-inset-right))'
       }}
     >
-      <h1 className="text-xl mb-4">Login</h1>
-      <input
-        type="email"
-        placeholder="your@email.com"
-        className="border p-3 text-[16px] leading-5 w-full mb-4 appearance-none"
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-      />
-      <button
-        onClick={handleLogin}
-        disabled={loading}
-        className="bg-blue-500 text-white h-12 rounded-xl text-base font-medium w-full"
+      <div
+        className="mx-auto w-full max-w-md box-border pt-6 px-4"
+        style={{
+          paddingLeft: 'max(16px, env(safe-area-inset-left))',
+          paddingRight: 'max(16px, env(safe-area-inset-right))',
+          paddingBottom: 'calc(24px + env(safe-area-inset-bottom))',
+        }}
       >
-        {loading ? 'Sending...' : 'Send Login Link'}
-      </button>
+        <h1 className="text-xl mb-4">Login</h1>
+        <input
+          type="email"
+          placeholder="your@email.com"
+          className="border p-3 text-[16px] leading-5 w-full mb-4 appearance-none"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+        />
+        <button
+          onClick={handleLogin}
+          disabled={loading}
+          className="bg-blue-500 text-white h-12 rounded-xl text-base font-medium w-full"
+        >
+          {loading ? 'Sending...' : 'Send Login Link'}
+        </button>
+      </div>
     </main>
   )
 }
