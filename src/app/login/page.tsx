@@ -28,7 +28,7 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="w-full min-h-screen px-4 py-6 max-w-md mx-auto box-border">
+    <main className="w-full min-h-screen max-w-md mx-auto box-border pt-6 pb-[env(safe-area-inset-bottom)] pl-[max(16px,env(safe-area-inset-left))] pr-[max(16px,env(safe-area-inset-right))]">
       <h1 className="text-xl mb-4">Login</h1>
       <input
         type="email"
@@ -40,7 +40,7 @@ export default function LoginPage() {
       <button
         onClick={handleLogin}
         disabled={loading}
-        className="bg-blue-500 text-white px-4 py-2 text-base w-full"
+        className="bg-blue-500 text-white h-12 rounded-xl text-base font-medium w-full"
       >
         {loading ? 'Sending...' : 'Send Login Link'}
       </button>
