@@ -88,7 +88,8 @@ export default function LoginPage() {
           disabled={!canSubmit}
           className="rounded-xl text-base font-medium w-full"
           style={{
-            height: 84,
+            paddingTop: 14,
+            paddingBottom: 14,
             backgroundColor: canSubmit ? '#3b82f6' : '#d1d5db',
             color: '#ffffff',
             cursor: canSubmit ? 'pointer' : 'not-allowed',
