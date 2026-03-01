@@ -3,6 +3,7 @@
 import { useMemo, useState } from 'react'
 import { supabase } from '../../lib/supabase'
 
+
 export default function LoginPage() {
   const [email, setEmail] = useState('')
   const [loading, setLoading] = useState(false)

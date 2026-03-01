@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { supabase } from '../../lib/supabase'
 import { useRouter } from 'next/navigation'
 import { BottomBar } from '../../components/BottomBar'
+import { savePostLoginRedirect } from '../../lib/postLoginRedirect'
 
 type Topic = {
     id: string
@@ -96,11 +97,33 @@ export default function TopicsPage() {
         }
     }, [])
 
+    useEffect(() => {
+        const redirectTo = sessionStorage.getItem('postLoginRedirect')
+        if (redirectTo) {
+            sessionStorage.removeItem('postLoginRedirect')
+            router.replace(redirectTo)
+        }
+    }, [router])
+
     if (!email) {
         return (
             <main style={{ padding: 20 }}>
                 <h1>Not logged in</h1>
-                <p><a href="/login">Go to Login</a></p>
+                <button
+                    onClick={() => {
+                        savePostLoginRedirect('/topics')
+                        router.push('/login')
+                    }}
+                    style={{
+                        height: 44,
+                        padding: '0 16px',
+                        border: '1px solid #ccc',
+                        borderRadius: 12,
+                        background: 'transparent',
+                    }}
+                >
+                    Go to Login
+                </button>
             </main>
         )
     }

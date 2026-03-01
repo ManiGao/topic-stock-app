@@ -4,12 +4,15 @@ import { useEffect, useState } from 'react'
 import { supabase } from '../../lib/supabase'
 import { KeyboardActionBar } from '../../components/KeyboardActionBar'
 import { BottomBar } from '../../components/BottomBar'
+import { savePostLoginRedirect } from '../../lib/postLoginRedirect'
+import { useRouter } from 'next/navigation'
 
 export default function CapturePage() {
   const [inputFocused, setInputFocused] = useState(false)
   const [email, setEmail] = useState<string | null>(null)
   const [log, setLog] = useState('')
   const [saving, setSaving] = useState(false)
+  const router = useRouter()
 
   useEffect(() => {
     const load = async () => {
@@ -40,7 +43,21 @@ export default function CapturePage() {
     return (
       <main style={{ padding: 20 }}>
         <h1>Not logged in</h1>
-        <p><a href="/login">Go to Login</a></p>
+        <button
+          onClick={() => {
+            savePostLoginRedirect('/capture')
+            router.push('/login')
+          }}
+          style={{
+            height: 44,
+            padding: '0 16px',
+            border: '1px solid #ccc',
+            borderRadius: 12,
+            background: 'transparent',
+          }}
+        >
+          Go to Login
+        </button>
       </main>
     )
   }
