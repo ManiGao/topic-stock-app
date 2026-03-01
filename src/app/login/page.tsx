@@ -28,7 +28,13 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="w-full min-h-screen max-w-md mx-auto box-border pt-6 pb-[env(safe-area-inset-bottom)] pl-[max(16px,env(safe-area-inset-left))] pr-[max(16px,env(safe-area-inset-right))]">
+    <main
+      className="w-full min-h-screen max-w-md mx-auto box-border pt-6 pb-[env(safe-area-inset-bottom)] px-4"
+      style={{
+        paddingLeft: 'max(16px, env(safe-area-inset-left))',
+        paddingRight: 'max(16px, env(safe-area-inset-right))'
+      }}
+    >
       <h1 className="text-xl mb-4">Login</h1>
       <input
         type="email"
