@@ -23,10 +23,65 @@ export default function TopicsPage() {
         }
         return 'raw'
     })
-    const [email, setEmail] = useState<string | null>(null)
+    const [userId, setUserId] = useState<string | null>(null)
+    const [displayName, setDisplayName] = useState<string | null>(null)
+    const [nameInput, setNameInput] = useState('')
+    const [nameLoading, setNameLoading] = useState(false)
+    const [nameError, setNameError] = useState<string | null>(null)
     const [items, setItems] = useState<Topic[]>([])
     const [loading, setLoading] = useState(false)
     const router = useRouter()
+
+    const loadProfile = async () => {
+        if (!userId) return
+        const { data, error } = await supabase
+            .from('profiles')
+            .select('display_name')
+            .eq('id', userId)
+            .maybeSingle()
+
+        if (error) {
+            // プロフィールはMVPでは致命ではないので、表示は止めずに握りつぶす
+            console.warn('profiles load error:', error.message)
+            return
+        }
+
+        if (data?.display_name) {
+            setDisplayName(data.display_name)
+        } else {
+            setDisplayName(null)
+        }
+    }
+
+    const saveDisplayName = async () => {
+        if (!userId) return
+        setNameError(null)
+
+        const v = nameInput.trim()
+        if (!v) {
+            setNameError('表示名を入力してください')
+            return
+        }
+        if (v.length > 24) {
+            setNameError('表示名は24文字以内にしてください')
+            return
+        }
+
+        setNameLoading(true)
+        const { error } = await supabase
+            .from('profiles')
+            .upsert({ id: userId, display_name: v })
+
+        setNameLoading(false)
+
+        if (error) {
+            setNameError(error.message)
+            return
+        }
+
+        setDisplayName(v)
+        setNameInput('')
+    }
 
     const load = async (s: 'raw' | 'ready') => {
         setLoading(true)
@@ -64,13 +119,19 @@ export default function TopicsPage() {
 
     useEffect(() => {
         supabase.auth.getSession().then(({ data }) => {
-            setEmail(data.session?.user?.email ?? null)
+            setUserId(data.session?.user?.id ?? null)
         })
     }, [])
 
     useEffect(() => {
         load(status)
     }, [status])
+
+    useEffect(() => {
+        if (!userId) return
+        loadProfile()
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [userId])
 
     useEffect(() => {
         localStorage.setItem('topics_status', status)
@@ -105,7 +166,7 @@ export default function TopicsPage() {
         }
     }, [router])
 
-    if (!email) {
+    if (!userId) {
         return (
             <main style={{ padding: 20 }}>
                 <h1>Not logged in</h1>
@@ -131,7 +192,47 @@ export default function TopicsPage() {
     return (
         <main style={{ padding: 20, maxWidth: 640, paddingBottom: 260 }}>
             <h1 style={{ fontSize: 20, marginBottom: 8 }}>Topics</h1>
-            <p style={{ marginBottom: 16 }}>Logged in as: {email}</p>
+
+            {displayName ? (
+                <p style={{ marginBottom: 16, fontSize: 14 }}>User: {displayName}</p>
+            ) : (
+                <div style={{ marginBottom: 16 }}>
+                    <p style={{ fontSize: 14, marginBottom: 8 }}>表示名が未設定です</p>
+
+                    <input
+                        value={nameInput}
+                        onChange={(e) => setNameInput(e.target.value)}
+                        placeholder="表示名（1〜24文字）"
+                        className="border p-3 text-[16px] leading-5 w-full mb-2 appearance-none"
+                        autoCapitalize="none"
+                        autoCorrect="off"
+                        spellCheck={false}
+                    />
+
+                    {nameError && (
+                        <p style={{ color: '#b91c1c', fontSize: 13, margin: '0 0 8px 0' }}>
+                            {nameError}
+                        </p>
+                    )}
+
+                    <button
+                        type="button"
+                        onClick={saveDisplayName}
+                        disabled={nameLoading}
+                        className="rounded-xl text-base font-medium w-full"
+                        style={{
+                            paddingTop: 12,
+                            paddingBottom: 12,
+                            backgroundColor: nameLoading ? '#d1d5db' : '#111827',
+                            color: '#ffffff',
+                            cursor: nameLoading ? 'not-allowed' : 'pointer',
+                            border: 'none',
+                        }}
+                    >
+                        {nameLoading ? 'Saving...' : '表示名を保存'}
+                    </button>
+                </div>
+            )}
 
             {loading ? (
                 <p>Loading...</p>
