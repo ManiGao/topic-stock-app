@@ -9,7 +9,8 @@ import { useRouter } from 'next/navigation'
 
 export default function CapturePage() {
   const [inputFocused, setInputFocused] = useState(false)
-  const [email, setEmail] = useState<string | null>(null)
+  const [userId, setUserId] = useState<string | null>(null)
+  const [displayName, setDisplayName] = useState<string | null>(null)
   const [log, setLog] = useState('')
   const [saving, setSaving] = useState(false)
   const router = useRouter()
@@ -17,10 +18,30 @@ export default function CapturePage() {
   useEffect(() => {
     const load = async () => {
       const { data } = await supabase.auth.getSession()
-      setEmail(data.session?.user?.email ?? null)
+      setUserId(data.session?.user?.id ?? null)
     }
     load()
   }, [])
+
+  useEffect(() => {
+    const loadProfile = async () => {
+      if (!userId) return
+      const { data, error } = await supabase
+        .from('profiles')
+        .select('display_name')
+        .eq('id', userId)
+        .maybeSingle()
+
+      if (error) {
+        console.warn('profiles load error:', error.message)
+        return
+      }
+
+      setDisplayName(data?.display_name ?? null)
+    }
+
+    loadProfile()
+  }, [userId])
 
   const handleSave = async () => {
     const v = log.trim()
@@ -39,7 +60,7 @@ export default function CapturePage() {
     alert('保存しました')
   }
 
-  if (!email) {
+  if (!userId) {
     return (
       <main style={{ padding: 20 }}>
         <h1>Not logged in</h1>
@@ -65,7 +86,11 @@ export default function CapturePage() {
   return (
     <main style={{ padding: 20, maxWidth: 720, paddingBottom: 180 }}>
       <h1 style={{ fontSize: 20, marginBottom: 8 }}>Capture</h1>
-      <p style={{ marginBottom: 16 }}>Logged in as: {email}</p>
+      {displayName ? (
+        <p style={{ marginBottom: 16, fontSize: 14 }}>User: {displayName}</p>
+      ) : (
+        <p style={{ marginBottom: 16, fontSize: 14 }}>User: 未設定（Topicsで設定）</p>
+      )}
 
 
       <input
